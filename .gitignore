@@ -8,3 +8,4 @@ build/
 *.ilk
 *.pdb
 .vscode/
+.highscore.txt
