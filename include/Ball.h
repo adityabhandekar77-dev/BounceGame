@@ -1,6 +1,7 @@
 #pragma once
 
 #include <raylib.h>
+#include <vector>
 
 class Player;
 
@@ -24,7 +25,7 @@ private:
     void CheckWallCollision();
     bool CheckPlayerCollision(const Player& player);
     
-
+    std::vector<Vector2> trail;
     Vector2 position;
     Vector2 velocity;
     float radius;

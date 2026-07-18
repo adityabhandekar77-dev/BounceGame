@@ -2,7 +2,7 @@
 #include "Player.h"
 #include "Ball.h"
 #include <raylib.h>
-
+#include <vector>
 enum class GameState
 {   
     MainMenu,
@@ -20,6 +20,14 @@ enum class Difficulty
     Expert
 };
 
+struct RainParticle
+{
+    Vector2 position;
+    float speed;
+    float length;
+    Color color;
+};
+
 class Game
 {
 public:
@@ -33,15 +41,23 @@ private:
     int hits;
 
     int score;
-    int highScore;
+    int easyHighScore;
+int mediumHighScore;
+int hardHighScore;
+int expertHighScore;
     bool newHighScorePlayed;
     bool showHighScoreText;
 float highScoreTimer;
 float countdownTimer = 3.0f;
 int countdownNumber = 3;
+int& GetCurrentHighScore();
+std::vector<RainParticle> rainParticles;
+Font titleFont;
+Font uiFont;
 
     Player player;
     Ball ball;
+    Texture2D background;
 
     Music menuMusic;
     Music gameplayMusic;

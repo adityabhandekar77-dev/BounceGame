@@ -1,5 +1,6 @@
 #include "Ball.h"
 #include "Player.h"
+#include <vector>
 
 #include <cmath>
 #include "raymath.h"
@@ -23,6 +24,13 @@ void Ball::SetStartSpeed(float speed)
 bool Ball::Update(const Player& player)
 {
     float delta = GetFrameTime();
+
+    trail.push_back(position);
+
+if (trail.size() > 12)
+{
+    trail.erase(trail.begin());
+}
 
     Move(delta);
     CheckWallCollision();
@@ -105,10 +113,12 @@ void Ball::Stop()
 }
 
 void Ball::Reset()
-{
+{   
+    trail.clear();
     position = {
     GetScreenWidth() / 2.0f,
     GetScreenHeight() / 2.0f
+    
 };
 
     float randomX = GetRandomValue(-100, 100) / 100.0f;
@@ -128,5 +138,62 @@ void Ball::Reset()
 
 void Ball::Draw()
 {
-    DrawCircleV(position, radius, color);
+    float time = (float)GetTime();
+
+    for (int i = 0; i < trail.size(); i++)
+    {
+        float progress = (float)i / trail.size();
+
+        // Animated pulse traveling through the trail
+        float pulse = sinf(time * 8.0f - i * 0.7f);
+
+        // Slightly animate each trail circle's size
+        float trailRadius =
+            radius * progress +
+            pulse * 2.0f;
+
+        // Prevent negative radius
+        if (trailRadius < 1.0f)
+        {
+            trailRadius = 1.0f;
+        }
+
+        unsigned char alpha =
+            (unsigned char)(180 * progress);
+
+        // Animated color shift
+        Color trailColor;
+
+        if (pulse > 0.0f)
+        {
+            trailColor = {
+                0,
+                200,
+                255,
+                alpha
+            };
+        }
+        else
+        {
+            trailColor = {
+                255,
+                0,
+                200,
+                alpha
+            };
+        }
+
+        DrawCircleV(
+            trail[i],
+            trailRadius,
+            trailColor
+        );
+    }
+
+    // Main ball
+    DrawCircleV(
+        position,
+        radius,
+        SKYBLUE
+    );
 }

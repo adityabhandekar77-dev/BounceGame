@@ -63,7 +63,39 @@ body.y = 650;
 lives = 3;
 }
 
-void Player::Draw()
+
+
+    void Player::Draw()
 {
-    DrawRectangleRec(body, BLUE);
+    // Outer glow
+    Rectangle outerGlow = {
+        body.x - 8.0f,
+        body.y - 8.0f,
+        body.width + 16.0f,
+        body.height + 16.0f
+    };
+
+    DrawRectangleRec(
+        outerGlow,
+        Fade(SKYBLUE, 0.12f)
+    );
+
+    // Inner glow
+    Rectangle innerGlow = {
+        body.x - 4.0f,
+        body.y - 4.0f,
+        body.width + 8.0f,
+        body.height + 8.0f
+    };
+
+    DrawRectangleRec(
+        innerGlow,
+        Fade(SKYBLUE, 0.25f)
+    );
+
+    // Main paddle
+    DrawRectangleRec(
+        body,
+        SKYBLUE
+    );
 }
