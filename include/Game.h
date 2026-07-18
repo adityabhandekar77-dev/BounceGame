@@ -6,8 +6,10 @@
 enum class GameState
 {   
     MainMenu,
+    Paused,
     Playing,
     GameOver
+
 };
 
 enum class Difficulty
@@ -35,6 +37,8 @@ private:
     bool newHighScorePlayed;
     bool showHighScoreText;
 float highScoreTimer;
+float countdownTimer = 3.0f;
+int countdownNumber = 3;
 
     Player player;
     Ball ball;

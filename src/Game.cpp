@@ -14,6 +14,7 @@ Game::Game()
 {
     
     InitWindow(1280, 720, "Bounce Game");
+    SetExitKey(KEY_NULL);
     SetTargetFPS(60);
 
     InitAudioDevice();
@@ -143,6 +144,9 @@ void Game::Run()
 
 void Game::Update()
 {
+    // =========================
+    // MAIN MENU
+    // =========================
     if (state == GameState::MainMenu)
     {
         if (IsKeyPressed(KEY_UP))
@@ -174,52 +178,69 @@ void Game::Update()
 
         return;
     }
+
+    // =========================
+    // PLAYING
+    // =========================
     if (state == GameState::Playing)
     {
+        // Pause game
+        if (IsKeyPressed(KEY_ESCAPE))
+        {
+            PlaySound(uiClickSound);
+
+            state = GameState::Paused;
+            PauseMusicStream(gameplayMusic);
+
+            return;
+        }
+
         player.Update();
 
         if (ball.Update(player))
         {
-          PlaySound(paddleHitSound);
+            PlaySound(paddleHitSound);
+
             score++;
             hits++;
 
+            // Check high score
             if (score > highScore)
-{
-    highScore = score;
-  
+            {
+                highScore = score;
 
-    if (!newHighScorePlayed)
-{
-    PlaySound(highScoreSound);
+                if (!newHighScorePlayed)
+                {
+                    PlaySound(highScoreSound);
 
-    newHighScorePlayed = true;
+                    newHighScorePlayed = true;
+                    showHighScoreText = true;
+                    highScoreTimer = 2.0f;
+                }
+            }
 
-    showHighScoreText = true;
-    highScoreTimer = 2.0f;
-}
-}
-
+            // Increase ball speed every 5 hits
             if (hits % 5 == 0)
             {
                 ball.IncreaseSpeed(20.0f);
             }
         }
 
+        // Ball missed
         if (ball.IsOutOfBounds())
         {
-           PlaySound(paddleMissSound);
+            PlaySound(paddleMissSound);
 
-player.LoseLife();
+            player.LoseLife();
 
             if (player.GetLives() <= 0)
-{
-    StopMusicStream(gameplayMusic);
+            {
+                StopMusicStream(gameplayMusic);
 
-    PlaySound(gameOverSound);
+                PlaySound(gameOverSound);
 
-    state = GameState::GameOver;
-}
+                state = GameState::GameOver;
+            }
             else
             {
                 ball.Reset();
@@ -229,7 +250,25 @@ player.LoseLife();
         return;
     }
 
+    // =========================
+    // PAUSED
+    // =========================
+    if (state == GameState::Paused)
+    {
+        if (IsKeyPressed(KEY_ESCAPE))
+        {
+            PlaySound(uiClickSound);
 
+            state = GameState::Playing;
+            ResumeMusicStream(gameplayMusic);
+        }
+
+        return;
+    }
+
+    // =========================
+    // GAME OVER
+    // =========================
     if (state == GameState::GameOver)
     {
         if (IsKeyPressed(KEY_SPACE))
@@ -249,6 +288,7 @@ player.LoseLife();
         return;
     }
 }
+    
 
 void Game::Draw()
 {
@@ -300,6 +340,33 @@ void Game::Draw()
                      GOLD);
         }
     }
+
+    else if (state == GameState::Paused)
+{
+    player.Draw();
+    ball.Draw();
+
+    DrawText(TextFormat("Score: %i", score), 20, 20, 30, BLACK);
+    DrawText(TextFormat("Lives: %i", player.GetLives()), 20, 60, 30, BLACK);
+    DrawText(TextFormat("High Score: %i", highScore), 20, 100, 30, BLACK);
+
+    DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(),
+                  Fade(BLACK, 0.5f));
+
+    DrawText("PAUSED",
+             470,
+             260,
+             60,
+             WHITE);
+
+    DrawText("Press ESC to Resume",
+             390,
+             350,
+             30,
+             WHITE);
+}
+
+
     else if (state == GameState::GameOver)
     {
         DrawText("GAME OVER", 420, 220, 60, RED);

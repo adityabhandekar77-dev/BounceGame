@@ -99,6 +99,11 @@ void Ball::IncreaseSpeed(float amount)
     velocity = Vector2Scale(direction, speed);
 }
 
+void Ball::Stop()
+{
+    velocity = {0.0f, 0.0f};
+}
+
 void Ball::Reset()
 {
     position = {

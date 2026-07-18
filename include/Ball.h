@@ -17,11 +17,13 @@ public:
     void Reset();
     public:
     void SetStartSpeed(float speed);
+    void Stop();
 
 private:
     void Move(float delta);
     void CheckWallCollision();
     bool CheckPlayerCollision(const Player& player);
+    
 
     Vector2 position;
     Vector2 velocity;
