@@ -24,7 +24,7 @@ The game features a custom neon-retro visual style, animated ball trails, dynami
 
 ### GameOver Screen
 
-![BounceGame GameOver Screen](screeshots/gameover.png)
+![BounceGame GameOver Screen](screenshots/gameover.png)
 
 ---
 
